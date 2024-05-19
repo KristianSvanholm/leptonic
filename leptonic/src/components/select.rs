@@ -5,7 +5,6 @@ use web_sys::{HtmlElement, KeyboardEvent, MouseEvent};
 
 use crate::{
     components::{
-        button::Button,
         chip::{Chip, ChipColor},
         icon::Icon,
         input::TextInput,
@@ -556,13 +555,13 @@ where
 
                         { move || match has_options.get() {
                             true => ().into_view(),
-                            false => view! {
+                            false => view!{{
                                 add.map(|add| {view!{
                                     <button on:click=move |_| {add.call(search.get())} disabled=search.get()=="">
                                         "Add option"
                                     </button>
                                 }})
-                            }.into_view(),
+                            }}.into_view(),
                         } }
                     </Show>
                 </leptonic-select-options>
