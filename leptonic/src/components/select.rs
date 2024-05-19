@@ -5,6 +5,7 @@ use web_sys::{HtmlElement, KeyboardEvent, MouseEvent};
 
 use crate::{
     components::{
+        button::Button,
         chip::{Chip, ChipColor},
         icon::Icon,
         input::TextInput,
@@ -86,6 +87,7 @@ pub fn Select<O>(
     #[prop(into)] set_selected: Out<O>,
     #[prop(into)] search_text_provider: Consumer<O, String>,
     #[prop(into)] render_option: ViewCallback<O>,
+    #[prop(into, optional)] add: Option<Callback<String>>,
     #[prop(into, optional)] search_filter_provider: Option<Consumer<(String, Vec<O>), Vec<O>>>,
     #[prop(into, optional)] autofocus_search: Option<Signal<bool>>,
     #[prop(into, optional)] class: Option<AttributeValue>,
@@ -297,9 +299,11 @@ where
                         { move || match has_options.get() {
                             true => ().into_view(),
                             false => view! {
-                                <leptonic-select-no-search-results>
-                                    "No options..."
-                                </leptonic-select-no-search-results>
+                                add.map(|add| {view!{
+                                    <button on:click=move |_| {add.call(search.get())} disabled=search.get()=="">
+                                        "Add option"
+                                    </button>
+                                }})
                             }.into_view(),
                         } }
                     </Show>
@@ -318,6 +322,7 @@ pub fn OptionalSelect<O>(
     #[prop(into)] search_text_provider: Consumer<O, String>,
     #[prop(into)] render_option: ViewCallback<O>,
     #[prop(into)] allow_deselect: MaybeSignal<bool>,
+    #[prop(into, optional)] add: Option<Callback<String>>,
     #[prop(into, optional)] search_filter_provider: Option<Consumer<(String, Vec<O>), Vec<O>>>,
     #[prop(into, optional)] autofocus_search: Option<Signal<bool>>,
     #[prop(into, optional)] class: Option<AttributeValue>,
@@ -552,9 +557,11 @@ where
                         { move || match has_options.get() {
                             true => ().into_view(),
                             false => view! {
-                                <div class="option">
-                                    "No options..."
-                                </div>
+                                add.map(|add| {view!{
+                                    <button on:click=move |_| {add.call(search.get())} disabled=search.get()=="">
+                                        "Add option"
+                                    </button>
+                                }})
                             }.into_view(),
                         } }
                     </Show>
@@ -573,6 +580,7 @@ pub fn Multiselect<O>(
     #[prop(into)] set_selected: Out<Vec<O>>,
     #[prop(into)] search_text_provider: Consumer<O, String>,
     #[prop(into)] render_option: ViewCallback<O>,
+    #[prop(into, optional)] add: Option<Callback<String>>,
     #[prop(into, optional)] search_filter_provider: Option<Consumer<(String, Vec<O>), Vec<O>>>,
     #[prop(into, optional)] autofocus_search: Option<Signal<bool>>,
     #[prop(into, optional)] class: Option<AttributeValue>,
@@ -820,11 +828,13 @@ where
 
                         { move || match has_options.get() {
                             true => ().into_view(),
-                            false => view! {
-                                <div class="option">
-                                    "No options..."
-                                </div>
-                            }.into_view(),
+                            false => view!{{
+                                add.map(|add| {view!{
+                                    <button on:click=move |_| {add.call(search.get())} disabled=search.get()=="">
+                                        "Add option"
+                                    </button>
+                                }})
+                            }}.into_view(),
                         } }
                     </Show>
                 </leptonic-select-options>
